@@ -1,13 +1,13 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).end();
 
-app.post('/chat', async (req, res) => {
   const { message, imageData, imageType } = req.body;
-  
+
   const content = [];
   if (imageData) {
     content.push({
@@ -34,6 +34,4 @@ app.post('/chat', async (req, res) => {
 
   const data = await response.json();
   res.json({ reply: data.content[0].text });
-});
-
-app.listen(3000, () => console.log('Running!'));
+}
